@@ -16,11 +16,13 @@ io.on('connection', (socket) => { // client와 연결되었을 때 발생
   console.log('We have a new connetion!!!');
 
   socket.on('join', ({ name, room }, callback) => { // on, 이벤트 리스터로 전달된 데이터가 있을 때 실행된다.
-    const { error, user } = addUser({ id: socket.id, name, room });
+    const { error, user } = addUser({ id: socket.id, name, room })
 
     if(error) return callback(error);
 
-    socket.emit('message', { user: 'admin', text: `${user.name}, welcome to the room ${user.room}` });
+    // console.log('입장: ',user)
+
+    socket.emit('message', { user: 'admin', test:`${user.name}, welcome to the room ${user.room}` })
     socket.broadcast.to(user.room).emit('message', { user: 'admin', text: `${user.name}, has joined!` });
     
     socket.join(user.room);
@@ -31,15 +33,16 @@ io.on('connection', (socket) => { // client와 연결되었을 때 발생
   socket.on('sendMessage', (message, callback) => {
     const user = getUser(socket.id);
 
-    io.to(user.room).emit('message', { user: user.name, text: message});
+    io.to(user.room).emit('message', {user: user.name, text: message})
 
-    callback()
+    callback();
   })
 
-  socket.on('disconnect', () => { // client와 연결해제되었을 때 발생
+  socket.on('dis_connect', () => { // client와 연결해제되었을 때 발생
     console.log('User had left!!!');
   })
 });
+
 
 app.use(router);
 
